@@ -40,6 +40,15 @@ module accelerator (
 
     assign data_out = (address == 4'h0) ? example_data :
                       8'h0;    
+
+
+    
+/* verilator lint_off UNUSEDSIGNAL */
+wire [7:0] unused_ui_in = ui_in;  // Silence "unused" warning
+/* verilator lint_on UNUSEDSIGNAL */
+
+assign uo_out = 8'b0;             // Default output (or set only used bits)
+
     
 
 endmodule
