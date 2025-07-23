@@ -28,20 +28,10 @@ module accelerator (
 
     reg [7:0] reg_A;
     reg [7:0] reg_B;
-
-    //reg reg_Start;
     reg [3:0] reg_Op;
 
     reg [15:0] reg_Result;
 
-    wire [15:0] math_Result;
-    
-    math_processor math (
-        .a(reg_A),
-        .b(reg_B),
-        .opcode(reg_Op),
-        .result(math_Result)
-    );
 
     
     always @(posedge clk) begin
@@ -57,7 +47,6 @@ module accelerator (
                 4'h4: reg_Op <= data_in[3:0];
                 default: ;
             endcase
-            reg_Result <= math_Result;
         end
     end
 
@@ -79,34 +68,4 @@ assign uo_out = 8'b0;             // Default output (or set only used bits)
 
     
 
-endmodule
-
-
-module math_processor (
-    input [7:0] a,
-    input [7:0] b,
-    input [3:0] opcode,
-    output reg [15:0] result
-);
-    localparam 
-        OP_ADD = 4'b0000,
-        OP_SUB = 4'b0001,
-        OP_MUL = 4'b0010,  // Multiplication
-        OP_DIV = 4'b0011,
-        OP_AND = 4'b0100,
-        OP_OR  = 4'b0101,
-        OP_XOR = 4'b0110;
-
-    always @(*) begin
-        case (opcode)
-            OP_ADD: result = {8'h00, a} + {8'h00, b};  // Addition
-            OP_SUB: result = {8'h00, a} - {8'h00, b};  // Subtraction
-            OP_MUL: result = a * b;  // CORRECTED: 8x8→16 multiplication
-            OP_DIV: result = b != 0 ? {8'h00, a} / {8'h00, b} : 16'hFFFF;
-            OP_AND: result = {8'h00, a & b};
-            OP_OR:  result = {8'h00, a | b};
-            OP_XOR: result = {8'h00, a ^ b};
-            default: result = 16'b0;
-        endcase
-    end
 endmodule
