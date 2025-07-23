@@ -70,10 +70,10 @@ endmodule
 
 
 module math_processor (
-    input [7:0] a;
-    input [7:0] b;
-    input [2:0] opcode;
-    output [15:0] result;
+    input [7:0] a,
+    input [7:0] b,
+    input [2:0] opcode,
+    output [15:0] result
 );
 
        localparam 
