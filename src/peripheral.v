@@ -26,20 +26,35 @@ module accelerator (
     output [7:0]  data_out      // Data out from the peripheral, set this in accordance with the supplied address
 );
 
-    reg [7:0] example_data;
+    reg [7:0] reg_A;
+    reg [7:0] reg_B;
+    reg [3:0] opcode;
+
+    reg [15:0] reg_Result;
     always @(posedge clk) begin
         if (!rst_n) begin
-            example_data <= 0;
-        end else begin
-            if (address == 4'h0) begin
-                if (data_write) example_data <= data_in;
-            end
+        reg_A <= '8:h0;
+        reg_B <= '8:h0;
+        opcode <= '3:h0;
+        result <= '16:h0;
+        end else if (data_write) begin
+            case (adress)
+                4'h0: reg_A <= data_in;
+                4'h1: reg_B <= data_in;
+                4'h4: opcode <= data_in[3:0];
+                default: ;
+            endcase
         end
     end
 
 
-    assign data_out = (address == 4'h0) ? example_data :
-                      8'h0;    
+    assign data_out =
+        (address == 4'h0) ? reg_A :         // Read A
+        (address == 4'h1) ? reg_B :         // Read B
+        (address == 4'h4) ? {5'b0, reg_Op} : // Read Opcode
+        (address == 4'h5) ? reg_Result[7:0] : // Read Result Low
+        (address == 4'h6) ? reg_Result[15:8] : // Read Result High
+        8'h00;
 
 
     
@@ -51,4 +66,37 @@ assign uo_out = 8'b0;             // Default output (or set only used bits)
 
     
 
+endmodule
+
+
+module math_processor (
+    input [7:0] a;
+    input [7:0] b;
+    input [3:0] opcode;
+    output [15:0] result;
+);
+
+       localparam 
+        OP_ADD = 3'b000,
+        OP_SUB = 3'b001,
+        OP_MUL = 3'b010,
+        OP_DIV = 3'b011,
+        OP_AND = 3'b100,
+        OP_OR  = 3'b101,
+        OP_XOR = 3'b110;
+
+    always @(*) begin
+        case (opcode)
+            OP_ADD: result = a + b;     // Addition
+            OP_SUB: result = a - b;     // Subtraction
+            OP_MUL: result = a * b;     // Multiplication (16-bit result)
+            OP_DIV: result = a / b;     // Division (truncated)
+            OP_AND: result = a & b;     // Bitwise AND
+            OP_OR:  result = a | b;     // Bitwise OR
+            OP_XOR: result = a ^ b;     // Bitwise XOR
+            default: result = 16'b0;     // Default
+        endcase
+    end
+
+    
 endmodule
