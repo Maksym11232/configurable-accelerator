@@ -26,14 +26,10 @@ module accelerator (
     output [7:0]  data_out      // Data out from the peripheral, set this in accordance with the supplied address
 );
 
-    reg ui_in_reg;
-
-    
     reg [7:0] example_data;
     always @(posedge clk) begin
         if (!rst_n) begin
             example_data <= 0;
-            uo_out[0] <= 0;
         end else begin
             if (address == 4'h0) begin
                 if (data_write) example_data <= data_in;
@@ -41,11 +37,6 @@ module accelerator (
         end
     end
 
-
-
-    always @(*) begin
-        ui_in_reg <= ui_in[0];
-    end
 
     assign data_out = (address == 4'h0) ? example_data :
                       8'h0;    
