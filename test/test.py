@@ -40,10 +40,9 @@ async def test_project(dut):
     # Wait 2 cycles for calculation
     await ClockCycles(dut.clk, 3)
     
-    # Read and combine result
-    lo = await tqv.read_reg(5)  # result[7:0]
-    hi = await tqv.read_reg(6)  # result[15:8]
-    result = (hi << 8) | lo
+    hi = await tqv.read_reg(6)
+    lo = await tqv.read_reg(5)
+    print(f"High byte: {hi}, Low byte: {lo}")
     
     # Display and verify
     print(f"\n\x1b[36mTEST: 20 * 20 = {result}\x1b[0m")
