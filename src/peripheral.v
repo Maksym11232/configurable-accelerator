@@ -29,38 +29,37 @@ module accelerator (
     reg [7:0] reg_A;
     reg [7:0] reg_B;
 
-    reg reg_Start;
+    //reg reg_Start;
     reg [3:0] reg_Op;
 
     reg [15:0] reg_Result;
 
+    wire [15:0] math_Result;
     
     math_processor math (
         .a(reg_A),
         .b(reg_B),
         .opcode(reg_Op),
-        .result(reg_Result)
+        .result(math_Result)
     );
 
     
     always @(posedge clk) begin
         if (!rst_n) begin
-        reg_A <= 0;
-        reg_B <= 0;
-        reg_Op <= 0;
-        reg_Start <= 0;
-        reg_Result <= 0;
+            reg_A <= 0;
+            reg_B <= 0;
+            reg_Op <= 0;
+            reg_Result <= 0;
         end else if (data_write) begin
             case (address)
                 4'h0: reg_A <= data_in;
                 4'h1: reg_B <= data_in;
                 4'h4: reg_Op <= data_in[3:0];
-                4'h7: reg_Start <= data_in[0];
                 default: ;
             endcase
+            reg_Result <= math_Result;
         end
     end
-
 
     assign data_out =
         (address == 4'h0) ? reg_A :         // Read A
@@ -103,7 +102,7 @@ module math_processor (
         case (opcode)
             OP_ADD: result = {8'h00, a} + {8'h00, b};     // Addition
             OP_SUB: result = {8'h00, a} - {8'h00, b};    // Subtraction
-            OP_MUL: result = {8'h00, a} * {8'h00, b};     // Multiplication (16-bit result)
+            OP_MUL: result = a * b;     // Multiplication (16-bit result)
             OP_DIV: result = {8'h00, a} / {8'h00, b};    // Division (truncated)
             OP_AND: result = {8'h00, a} & {8'h00, b};     // Bitwise AND
             OP_OR:  result = {8'h00, a} | {8'h00, b};     // Bitwise OR
