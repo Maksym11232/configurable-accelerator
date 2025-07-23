@@ -101,13 +101,13 @@ module math_processor (
 
     always @(*) begin
         case (opcode)
-            OP_ADD: result = a + b;     // Addition
-            OP_SUB: result = a - b;     // Subtraction
-            OP_MUL: result = a * b;     // Multiplication (16-bit result)
-            OP_DIV: result = a / b;     // Division (truncated)
-            OP_AND: result = a & b;     // Bitwise AND
-            OP_OR:  result = a | b;     // Bitwise OR
-            OP_XOR: result = a ^ b;     // Bitwise XOR
+            OP_ADD: result = {8'h00, a} + {8'h00, b};     // Addition
+            OP_SUB: result = {8'h00, a} - {8'h00, b};    // Subtraction
+            OP_MUL: result = {8'h00, a} * {8'h00, b};     // Multiplication (16-bit result)
+            OP_DIV: result = {8'h00, a} / {8'h00, b};    // Division (truncated)
+            OP_AND: result = {8'h00, a} & {8'h00, b};     // Bitwise AND
+            OP_OR:  result = {8'h00, a} | {8'h00, b};     // Bitwise OR
+            OP_XOR: result = {8'h00, a} ^ {8'h00, b};     // Bitwise XOR
             default: result = 16'b0;     // Default
         endcase
     end
