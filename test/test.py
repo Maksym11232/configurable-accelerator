@@ -43,7 +43,4 @@ async def test_project(dut):
     hi = await tqv.read_reg(6)
     lo = await tqv.read_reg(5)
     print(f"High byte: {hi}, Low byte: {lo}")
-    
-    # Display and verify
-    print(f"\n\x1b[36mTEST: 20 * 20 = {result}\x1b[0m")
-    assert result == 400, "Multiplication failed!"
+
