@@ -32,20 +32,19 @@ async def test_project(dut):
 
 
 
-    # Test register write and read back
- await write_reg(dut, 0, 20)  # reg_A = 20
-    await write_reg(dut, 1, 20)  # reg_B = 20
-    await write_reg(dut, 4, 0b0010)  # Opcode for multiply (OP_MUL=4'b0010)
-
+ # Test 20 * 20
+    await tqv.write_reg(0, 20)  # reg_A = 20
+    await tqv.write_reg(1, 20)  # reg_B = 20
+    await tqv.write_reg(4, 0b0010)  # OP_MUL (from your localparam)
+    
     # Wait 2 cycles for calculation
-    await RisingEdge(dut.clk)
-    await RisingEdge(dut.clk)
-
-    # Read result (low and high bytes)
-    result_low = await read_reg(dut, 5)
-    result_high = await read_reg(dut, 6)
-    result = (result_high << 8) | result_low
-
-    print(f"Result: {result} (Expected: {20*20})")
-    assert await tqv.read_reg(0) == 20
-
+    await tqv.wait_cycles(2)
+    
+    # Read and combine result
+    lo = await tqv.read_reg(5)  # result[7:0]
+    hi = await tqv.read_reg(6)  # result[15:8]
+    result = (hi << 8) | lo
+    
+    # Display and verify
+    print(f"\n\x1b[36mTEST: 20 * 20 = {result}\x1b[0m")
+    assert result == 400, "Multiplication failed!"
