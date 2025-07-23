@@ -38,7 +38,7 @@ async def test_project(dut):
     await tqv.write_reg(4, 0b0010)  # OP_MUL (from your localparam)
     
     # Wait 2 cycles for calculation
-    await tqv.wait_cycles(2)
+    await ClockCycles(dut.clk, 3)
     
     # Read and combine result
     lo = await tqv.read_reg(5)  # result[7:0]
