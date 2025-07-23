@@ -36,7 +36,7 @@ module accelerator (
         reg_A <= 8'h0;
         reg_B <= 8'h0;
         opcode <= 3'h0;
-        reg_Result <= '16'h0;
+        reg_Result <= 16'h0;
         end else if (data_write) begin
             case (address)
                 4'h0: reg_A <= data_in;
