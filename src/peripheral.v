@@ -102,7 +102,7 @@ module math_processor (
         case (opcode)
             OP_ADD: result = {8'h00, a} + {8'h00, b};     // Addition
             OP_SUB: result = {8'h00, a} - {8'h00, b};    // Subtraction
-            OP_MUL: result = a * b;     // Multiplication (16-bit result)
+            OP_MUL: result = {8'h00, a} * {8'h00, b};  // 16x16→16 bits (Correct)
             OP_DIV: result = {8'h00, a} / {8'h00, b};    // Division (truncated)
             OP_AND: result = {8'h00, a} & {8'h00, b};     // Bitwise AND
             OP_OR:  result = {8'h00, a} | {8'h00, b};     // Bitwise OR
