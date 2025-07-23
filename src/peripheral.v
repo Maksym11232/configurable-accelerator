@@ -65,7 +65,7 @@ module accelerator (
     assign data_out =
         (address == 4'h0) ? reg_A :         // Read A
         (address == 4'h1) ? reg_B :         // Read B
-        (address == 4'h4) ? {5'b0, reg_Op} : // Read Opcode
+        (address == 4'h4) ? {4'b0, reg_Op} : // Read Opcode
         (address == 4'h5) ? reg_Result[7:0] : // Read Result Low
         (address == 4'h6) ? reg_Result[15:8] : // Read Result High
         8'h00;
@@ -87,7 +87,7 @@ module math_processor (
     input [7:0] a,
     input [7:0] b,
     input [3:0] opcode,
-    output [15:0] result
+    output reg [15:0] result
 );
 
        localparam 
