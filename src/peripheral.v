@@ -28,20 +28,20 @@ module accelerator (
 
     reg [7:0] reg_A;
     reg [7:0] reg_B;
-    reg [2:0] opcode;
+    reg [2:0] reg_Op;
 
     reg [15:0] reg_Result;
     always @(posedge clk) begin
         if (!rst_n) begin
         reg_A <= 8'h0;
         reg_B <= 8'h0;
-        opcode <= 3'h0;
+        reg_Op <= 3'h0;
         reg_Result <= 16'h0;
         end else if (data_write) begin
             case (address)
                 4'h0: reg_A <= data_in;
                 4'h1: reg_B <= data_in;
-                4'h4: opcode <= data_in[2:0];
+                4'h4: reg_Op <= data_in[2:0];
                 default: ;
             endcase
         end
