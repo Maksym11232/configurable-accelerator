@@ -38,14 +38,10 @@ module accelerator (
         end
     end
 
-    // All output pins must be assigned. If not used, assign to 0.
-    assign uo_out  = ui_in + example_data;  // Example: uo_out is the sum of ui_in and the example register
 
-    // Address 0 reads the example data register.  
-    // Address 1 reads ui_in
-    // All other addresses read 0.
+
     assign data_out = (address == 4'h0) ? example_data :
-                      (address == 4'h1) ? ui_in :
                       8'h0;    
+    
 
 endmodule
