@@ -88,11 +88,10 @@ module math_processor (
     input [3:0] opcode,
     output reg [15:0] result
 );
-
-       localparam 
+    localparam 
         OP_ADD = 4'b0000,
         OP_SUB = 4'b0001,
-        OP_MUL = 4'b0010,
+        OP_MUL = 4'b0010,  // Multiplication
         OP_DIV = 4'b0011,
         OP_AND = 4'b0100,
         OP_OR  = 4'b0101,
@@ -100,16 +99,14 @@ module math_processor (
 
     always @(*) begin
         case (opcode)
-            OP_ADD: result = {8'h00, a} + {8'h00, b};     // Addition
-            OP_SUB: result = {8'h00, a} - {8'h00, b};    // Subtraction
-            OP_MUL: result = {8'h00, a} * {8'h00, b};  // 16x16→16 bits (Correct)
-            OP_DIV: result = {8'h00, a} / {8'h00, b};    // Division (truncated)
-            OP_AND: result = {8'h00, a} & {8'h00, b};     // Bitwise AND
-            OP_OR:  result = {8'h00, a} | {8'h00, b};     // Bitwise OR
-            OP_XOR: result = {8'h00, a} ^ {8'h00, b};     // Bitwise XOR
-            default: result = 16'b0;     // Default
+            OP_ADD: result = {8'h00, a} + {8'h00, b};  // Addition
+            OP_SUB: result = {8'h00, a} - {8'h00, b};  // Subtraction
+            OP_MUL: result = a * b;  // CORRECTED: 8x8→16 multiplication
+            OP_DIV: result = b != 0 ? {8'h00, a} / {8'h00, b} : 16'hFFFF;
+            OP_AND: result = {8'h00, a & b};
+            OP_OR:  result = {8'h00, a | b};
+            OP_XOR: result = {8'h00, a ^ b};
+            default: result = 16'b0;
         endcase
     end
-
-    
 endmodule
