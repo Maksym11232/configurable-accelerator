@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Your Name
+ * Copyright (c) 2025 Maksym Podgorski
  * SPDX-License-Identifier: Apache-2.0
  */
 
