@@ -28,7 +28,7 @@ module accelerator (
 
     reg [7:0] reg_A;
     reg [7:0] reg_B;
-    reg [3:0] opcode;
+    reg [2:0] opcode;
 
     reg [15:0] reg_Result;
     always @(posedge clk) begin
@@ -38,10 +38,10 @@ module accelerator (
         opcode <= '3:h0;
         result <= '16:h0;
         end else if (data_write) begin
-            case (adress)
+            case (address)
                 4'h0: reg_A <= data_in;
                 4'h1: reg_B <= data_in;
-                4'h4: opcode <= data_in[3:0];
+                4'h4: opcode <= data_in[2:0];
                 default: ;
             endcase
         end
@@ -72,7 +72,7 @@ endmodule
 module math_processor (
     input [7:0] a;
     input [7:0] b;
-    input [3:0] opcode;
+    input [2:0] opcode;
     output [15:0] result;
 );
 
