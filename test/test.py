@@ -33,14 +33,22 @@ async def test_project(dut):
 
 
  # Test 20 * 20
-    await tqv.write_reg(0, 20)  # reg_A = 20
+    await tqv.write_reg(0, 10)  # reg_A = 10
     await tqv.write_reg(1, 20)  # reg_B = 20
-    await tqv.write_reg(4, 0b0010)  # OP_MUL (from your localparam)
+    await tqv.write_reg(2, 10)  # reg_C = 30
+    await tqv.write_reg(3, 20)  # reg_D = 40
+
     
-    # Wait 2 cycles for calculation
+    await tqv.write_reg(4, 0b0010)  # OP_MUL (from your localparam)
+
     await ClockCycles(dut.clk, 3)
     
-    hi = await tqv.read_reg(6)
-    lo = await tqv.read_reg(5)
-    print(f"Readback: {(hi << 8) | lo} (Expected: 400)")
+    A = await tqv.read_reg(0)
+    B = await tqv.read_reg(1)
+    C = await tqv.read_reg(2)
+    D = await tqv.read_reg(3)
+
+    Op = await tqv.read_reg(4)
+    
+    print(f"A: {A}, B: {B}, C: {C}, D: {D}, OP:{Op}")
 
