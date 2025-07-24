@@ -28,9 +28,12 @@ module accelerator (
 
     reg [7:0] reg_A;
     reg [7:0] reg_B;
+    reg [7:0] reg_C;
+    reg [7:0] reg_D;
+    
     reg [3:0] reg_Op;
 
-    reg [15:0] reg_Result;
+    reg [7:0] reg_Result;
 
 
     
@@ -38,12 +41,16 @@ module accelerator (
         if (!rst_n) begin
             reg_A <= 0;
             reg_B <= 0;
+            reg_C <= 0;
+            reg_D <= 0;
             reg_Op <= 0;
             reg_Result <= 0;
         end else if (data_write) begin
             case (address)
                 4'h0: reg_A <= data_in;
                 4'h1: reg_B <= data_in;
+                4'h2: reg_C <= data_in;
+                4'h3: reg_D <= data_in;
                 4'h4: reg_Op <= data_in[3:0];
                 default: ;
             endcase
@@ -53,9 +60,10 @@ module accelerator (
     assign data_out =
         (address == 4'h0) ? reg_A :         // Read A
         (address == 4'h1) ? reg_B :         // Read B
+        (address == 4'h2) ? reg_C :         // Read A
+        (address == 4'h3) ? reg_D :         // Read B
         (address == 4'h4) ? {4'b0, reg_Op} : // Read Opcode
-        (address == 4'h5) ? reg_Result[7:0] : // Read Result Low
-        (address == 4'h6) ? reg_Result[15:8] : // Read Result High
+        (address == 4'h5) ? reg_Result : // Read Result Low
         8'h00;
 
 
