@@ -1,4 +1,4 @@
-/*
++/*
  * Copyright (c) 2025 Maksym Podgorski
  * SPDX-License-Identifier: Apache-2.0
  */
@@ -36,6 +36,18 @@ module accelerator (
     reg [7:0] reg_Result;
 
 
+    logic [7:0] alu_a;
+    logic [7:0] alu_b;
+    logic [3:0] alu_op;
+    logic [7:0] alu_out;
+
+    alu alu(
+        .a(alu_a),
+        .b(alu_b),
+        .op(alu_op),
+        .out(alu_out)
+    );
+
     
     always @(posedge clk) begin
         if (!rst_n) begin
@@ -54,6 +66,7 @@ module accelerator (
                 4'h4: reg_Op <= data_in[3:0];
                 default: ;
             endcase
+            reg_Result <= alu_out;
         end
     end
 
@@ -76,4 +89,23 @@ assign uo_out = 8'b0;             // Default output (or set only used bits)
 
     
 
+endmodule
+
+
+module alu(
+    input logic [7:0] a,
+    input logic [7:0] b,
+    input logic [3:0] op,
+    output logic [7:0] out
+);
+
+    always_comb begin
+        case (op)
+            4'b0000: out = a + b;
+            4'b0001: out = a - b;
+        endcase
+    end
+
+
+    
 endmodule
