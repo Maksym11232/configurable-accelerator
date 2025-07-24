@@ -30,6 +30,11 @@ module accelerator (
     logic [7:0] reg_B;
     logic [7:0] reg_C;
     logic [7:0] reg_D;
+
+    logic [3:0] op_1;
+    logic [1:0] input_a_1;
+    logic [1:0] input_b_1;
+    logic [1:0] output_1;
     
     
     logic [3:0] alu_op;
@@ -57,17 +62,32 @@ module accelerator (
             reg_B <= 0;
             reg_C <= 0;
             reg_D <= 0;
+            
             alu_op <= 0;
-            alu_sel_a <= 2'b00;
-            alu_sel_b <= 2'b01;
+            alu_out <= 0;
+            alu_sel_a <= 0;
+            alu_sel_b <= 0;
+            
+            op_1 <= 0;
+            input_a_1 <= 0;
+            input_b_1 <= 0;
+            output_1 <= 0;
         end else if (data_write) begin
             case (address)
                 4'h0: reg_A <= data_in;
                 4'h1: reg_B <= data_in;
                 4'h2: reg_C <= data_in;
                 4'h3: reg_D <= data_in;
-                4'h4: alu_op <= data_in[3:0];
+                4'h4: op_1 <= data_in[3:0];
+                4'h7: begin
+                    input_a_1 <= data_in[1:0];
+                    input_b_1 <= data_in[3:2];
+                    output_1 <= data_in[5:4];
+                      end
                 default: ;
+                alu_op <= op_1;
+                alu_sel_a <= input_a_1;
+                alu_sel_b <= input_b_1;
             endcase
         end
     end
@@ -77,7 +97,7 @@ module accelerator (
         (address == 4'h1) ? reg_B :         // Read B
         (address == 4'h2) ? reg_C :         // Read C
         (address == 4'h3) ? reg_D :         // Read D
-        (address == 4'h4) ? {4'b0, alu_op} : // Read Opcode
+        (address == 4'h4) ? {4'b0, op_1} : // Read Opcode
         (address == 4'h5) ? alu_out : // Read Result
         8'h00;
 
