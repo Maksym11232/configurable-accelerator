@@ -85,10 +85,10 @@ module accelerator (
                     output_1 <= data_in[5:4];
                       end
                 default: ;
-                alu_op <= op_1;
-                alu_sel_a <= input_a_1;
-                alu_sel_b <= input_b_1;
             endcase
+            alu_op <= op_1;
+            alu_sel_a <= input_a_1;
+            alu_sel_b <= input_b_1;
         end
     end
 
