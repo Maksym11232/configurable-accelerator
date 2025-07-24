@@ -26,24 +26,26 @@ module accelerator (
     output [7:0]  data_out      // Data out from the peripheral, set this in accordance with the supplied address
 );
 
-    reg [7:0] reg_A;
-    reg [7:0] reg_B;
-    reg [7:0] reg_C;
-    reg [7:0] reg_D;
+    logic [7:0] reg_A;
+    logic [7:0] reg_B;
+    logic [7:0] reg_C;
+    logic [7:0] reg_D;
     
-    reg [3:0] reg_Op;
-
-    reg [7:0] reg_Result;
-
-
-    logic [7:0] alu_a;
-    logic [7:0] alu_b;
+    
     logic [3:0] alu_op;
     logic [7:0] alu_out;
+    logic [1:0] alu_sel_a;
+    logic [1:0] alu_sel_b;
 
     alu alu(
-        .a(alu_a),
-        .b(alu_b),
+        .A(reg_A),
+        .B(reg_B),
+        .C(reg_C),
+        .D(reg_D),
+
+        .sel_a(alu_sel_a),
+        .sel_b(alu_sel_b),
+        
         .op(alu_op),
         .out(alu_out)
     );
@@ -55,28 +57,28 @@ module accelerator (
             reg_B <= 0;
             reg_C <= 0;
             reg_D <= 0;
-            reg_Op <= 0;
-            reg_Result <= 0;
+            alu_op <= 0;
+            alu_sel_a <= 2'b00;
+            alu_sel_b <= 2'b01;
         end else if (data_write) begin
             case (address)
                 4'h0: reg_A <= data_in;
                 4'h1: reg_B <= data_in;
                 4'h2: reg_C <= data_in;
                 4'h3: reg_D <= data_in;
-                4'h4: reg_Op <= data_in[3:0];
+                4'h4: alu_op <= data_in[3:0];
                 default: ;
             endcase
-            reg_Result <= alu_out;
         end
     end
 
     assign data_out =
         (address == 4'h0) ? reg_A :         // Read A
         (address == 4'h1) ? reg_B :         // Read B
-        (address == 4'h2) ? reg_C :         // Read A
-        (address == 4'h3) ? reg_D :         // Read B
-        (address == 4'h4) ? {4'b0, reg_Op} : // Read Opcode
-        (address == 4'h5) ? reg_Result : // Read Result Low
+        (address == 4'h2) ? reg_C :         // Read C
+        (address == 4'h3) ? reg_D :         // Read D
+        (address == 4'h4) ? {4'b0, alu_op} : // Read Opcode
+        (address == 4'h5) ? alu_out : // Read Result
         8'h00;
 
 
@@ -93,16 +95,40 @@ endmodule
 
 
 module alu(
-    input logic [7:0] a,
-    input logic [7:0] b,
+    input logic [7:0] A,
+    input logic [7:0] B,
+    input logic [7:0] C,
+    input logic [7:0] D,
+
+    input logic [1:0] sel_a,
+    input logic [1:0] sel_b,
+    
     input logic [3:0] op,
+
     output logic [7:0] out
 );
 
+    logic [7:0] alu_a;
+    logic [7:0] alu_b;
+    
     always_comb begin
+        case (sel_a)
+            2'b00: alu_a = A;
+            2'b01: alu_a = B;
+            2'b10: alu_a = C;
+            2'b11: alu_a = D;
+        endcase
+
+        case (sel_b)
+            2'b00: alu_b = A;
+            2'b01: alu_b = B;
+            2'b10: alu_b = C;
+            2'b11: alu_b = D;
+        endcase
+                
         case (op)
-            4'b0000: out = a + b;
-            4'b0001: out = a - b;
+            4'b0000: out = alu_a + alu_b;
+            4'b0001: out = alu_a - alu_b;
         endcase
     end
 
