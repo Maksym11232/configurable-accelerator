@@ -49,6 +49,8 @@ async def test_project(dut):
     D = await tqv.read_reg(3)
 
     Op = await tqv.read_reg(4)
+
+    res = await tqv.read_reg(4)
     
-    print(f"A: {A}, B: {B}, C: {C}, D: {D}, OP:{Op}")
+    print(f"A: {A}, B: {B}, C: {C}, D: {D}, OP:{Op}, res: {res}")
 
