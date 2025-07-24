@@ -129,6 +129,7 @@ module alu(
         case (op)
             4'b0000: out = alu_a + alu_b;
             4'b0001: out = alu_a - alu_b;
+            default: out = 8'b0;
         endcase
     end
 
