@@ -26,6 +26,10 @@ module accelerator (
     output [7:0]  data_out      // Data out from the peripheral, set this in accordance with the supplied address
 );
 
+    logic [7:0] data_out_logic;
+
+
+    
     logic [7:0] A;
     logic [7:0] B;
     logic [7:0] C;
@@ -69,19 +73,19 @@ module accelerator (
         
 always_comb begin
     case (address)
-        4'd0: data_out = A;
-        4'd1: data_out = B;
-        4'd2: data_out = C;
-        4'd3: data_out = D;
-        4'd4: data_out = {4'b0, op_1};       // Pad op_1 to 8 bits
-        4'd5: data_out = {6'b0, dest_1};     // Pad dest_1 to 8 bits
-        4'd6: data_out = {6'b0, a_1};        // Pad a_1 to 8 bits
-        4'd7: data_out = {6'b0, b_1};        // Pad b_1 to 8 bits
-        default: data_out = 8'b0;            // Explicit default
+        4'd0: data_out_logic = A;
+        4'd1: data_out_logic = B;
+        4'd2: data_out_logic = C;
+        4'd3: data_out_logic = D;
+        4'd4: data_out_logic = {4'b0, op_1};       // Pad op_1 to 8 bits
+        4'd5: data_out_logic = {6'b0, dest_1};     // Pad dest_1 to 8 bits
+        4'd6: data_out_logic = {6'b0, a_1};        // Pad a_1 to 8 bits
+        4'd7: data_out_logic = {6'b0, b_1};        // Pad b_1 to 8 bits
+        default: data_out_logic = 8'b0;            // Explicit default
     endcase
 end
 
-
+assign data_out = data_out_logic;
             
 /* verilator lint_off UNUSEDSIGNAL */
 wire [7:0] unused_ui_in = ui_in;  // Silence "unused" warning
