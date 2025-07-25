@@ -38,8 +38,6 @@ async def test_project(dut):
     await tqv.write_reg(2, 30)  # reg_C = 30
     await tqv.write_reg(3, 40)  # reg_D = 40
 
-    
-    await tqv.write_reg(4, 0b0000)  
     await ClockCycles(dut.clk, 3)
     
     A = await tqv.read_reg(0)
@@ -47,9 +45,5 @@ async def test_project(dut):
     C = await tqv.read_reg(2)
     D = await tqv.read_reg(3)
 
-    Op = await tqv.read_reg(4)
-
-    res = await tqv.read_reg(5)
-    
-    print(f"A: {A}, B: {B}, C: {C}, D: {D}, OP:{Op}, res: {res}")
+    print(f"A: {A}, B: {B}, C: {C}, D: {D}")
 
