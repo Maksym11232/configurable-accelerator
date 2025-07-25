@@ -26,16 +26,38 @@ module accelerator (
     output [7:0]  data_out      // Data out from the peripheral, set this in accordance with the supplied address
 );
 
+    logic [7:0] A;
+    logic [7:0] B;
+    logic [7:0] C;
+    logic [7:0] D;
     
     always @(posedge clk) begin
         if (!rst_n) begin
-            
+           A <= 0;
+            B <= 0;
+            C <= 0;
+            D <= 0;
         end else if (data_write) begin
-            
+            case (address)
+                4'd0: A <= data_in;
+                4'd1: B <= data_in;
+                4'd2: C <= data_in;
+                4'd3: D <= data_in;
+                default: ;
+            endcase
+        end
     end
 
 
-    
+        
+        assign data_out =   (address == 4'd0) ? A :
+                            (address == 4'd1) ? B :
+                            (address == 4'd2) ? C :
+                            (address == 4'd3) ? D : 0;
+                            
+
+
+            
 /* verilator lint_off UNUSEDSIGNAL */
 wire [7:0] unused_ui_in = ui_in;  // Silence "unused" warning
 /* verilator lint_on UNUSEDSIGNAL */
