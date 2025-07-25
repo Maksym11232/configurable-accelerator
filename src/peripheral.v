@@ -30,19 +30,36 @@ module accelerator (
     logic [7:0] B;
     logic [7:0] C;
     logic [7:0] D;
+
+    logic [3:0] op_1;
+    logic [1:0] dest_1;
+    logic [1:0] a_1;
+    logic [1:0] b_1;
     
-    always @(posedge clk) begin
+    always_ff @(posedge clk) begin
         if (!rst_n) begin
             A <= 0;
             B <= 0;
             C <= 0;
             D <= 0;
+
+            op_1 <= 0;
+            dest_1 <= 0;
+            a_1 <= 0;
+            b_1 <= 0;
         end else if (data_write) begin
             case (address)
                 4'd0: A <= data_in;
                 4'd1: B <= data_in;
                 4'd2: C <= data_in;
                 4'd3: D <= data_in;
+
+                4'd4: op_1 <= data_in[3:0];
+                4'd7: begin
+                    a_1 <= data_in[1:0];
+                    b_1 <= data_in[3:2];
+                    dest_1 <= data_in[5:4];
+                end
                 default: ;
             endcase
         end
@@ -50,11 +67,19 @@ module accelerator (
 
 
         
-        assign data_out =   (address == 4'd0) ? A :
-                            (address == 4'd1) ? B :
-                            (address == 4'd2) ? C :
-                            (address == 4'd3) ? D : 0;
-                            
+always_comb begin
+    case (address)
+        4'd0: data_out = A;
+        4'd1: data_out = B;
+        4'd2: data_out = C;
+        4'd3: data_out = D;
+        4'd4: data_out = {4'b0, op_1};       // Pad op_1 to 8 bits
+        4'd5: data_out = {6'b0, dest_1};     // Pad dest_1 to 8 bits
+        4'd6: data_out = {6'b0, a_1};        // Pad a_1 to 8 bits
+        4'd7: data_out = {6'b0, b_1};        // Pad b_1 to 8 bits
+        default: data_out = 8'b0;            // Explicit default
+    endcase
+end
 
 
             
